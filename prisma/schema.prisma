@@ -76,6 +76,7 @@ model Booking {
   userId     Int
   table      Table         @relation(fields: [tableId], references: [id])
   tableId    Int
+  paymentProofUrl String?
   date       DateTime
   time       String        // format "HH:mm"
   guestCount Int

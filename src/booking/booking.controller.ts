@@ -1,15 +1,23 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { CreateBookingDto, UpdateBookingDto } from './dto/booking.dto';
 import { JwtAuthGuard } from '../halper/jwt-auth.guard';
 import { RoleGuard, Roles } from 'src/halper/roles-guard';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Put, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+
 
 @ApiTags('Booking')
 @Controller('booking')
 @UseGuards(JwtAuthGuard) // pastikan semua route butuh auth
 export class BookingController {
-    constructor(private readonly bookingService: BookingService) { }
+
+    constructor(
+    private readonly bookingService: BookingService,
+    private readonly cloudinaryService: CloudinaryService,
+) {}
 
     // Admin
     @Get()
@@ -42,10 +50,16 @@ export class BookingController {
     }
 
     // Customer - buat booking
-    @Post()
-    create(@Request() req, @Body() dto: CreateBookingDto) {
-        return this.bookingService.create(req.user.id, dto)
-    }
+    @Post(':id/payment-proof')
+@UseInterceptors(FileInterceptor('payment_proof', { storage: memoryStorage() }))
+async uploadPaymentProof(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+) {
+    const uploaded = await this.cloudinaryService.uploadFile(file, 'payment-proof');
+    const url = (uploaded as any).secure_url;
+    return this.bookingService.updatePaymentProof(+id, url);
+}
 
     // Customer - cancel booking
     @Put(':id/cancel')

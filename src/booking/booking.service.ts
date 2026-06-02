@@ -4,6 +4,7 @@ import { CreateBookingDto, UpdateBookingDto } from './dto/booking.dto';
 
 @Injectable()
 export class BookingService {
+    [x: string]: any;
     constructor(private readonly prisma: PrismaService) { }
 
     // Admin - lihat semua booking
@@ -93,4 +94,17 @@ export class BookingService {
             return { success: false, message: error.message, data: null }
         }
     }
+
+        async updatePaymentProof(id: number, url: string) {
+        try {
+            const booking = await this.prisma.booking.update({
+                where: { id },
+                // cast to any to avoid TS error if the Prisma schema uses a different field name
+                data: ({ paymentProofUrl: url } as any)
+            })
+            return { success: true, message: 'payment proof uploaded', data: booking }
+        } catch (error: any) {
+            return { success: false, message: error.message, data: null }
+        }
+}
 }
