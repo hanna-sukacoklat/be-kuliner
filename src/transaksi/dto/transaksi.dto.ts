@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional } from "class-validator";
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateTransaksiDto {
     @IsNotEmpty()
@@ -11,6 +11,10 @@ export class CreateTransaksiDto {
     @IsOptional()
     @IsEnum(['CASH', 'QRIS'])
     paymentMethod?: 'CASH' | 'QRIS'
+
+    @IsOptional()
+    @IsString()
+    paymentProofUrl?: string
 }
 
 export class UpdateTransaksiDto {

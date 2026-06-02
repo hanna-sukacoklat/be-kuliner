@@ -103,6 +103,7 @@ model Transaction {
   booking       Booking       @relation(fields: [bookingId], references: [id])
   bookingId     Int           @unique
   total         Float
+   paymentProofUrl String?
   paymentMethod PaymentMethod @default(CASH)
   status        PaymentStatus @default(UNPAID)
   createdAt     DateTime      @default(now())
