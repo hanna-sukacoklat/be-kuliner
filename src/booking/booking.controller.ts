@@ -49,17 +49,22 @@ export class BookingController {
         return this.bookingService.findMyBookings(req.user.id)
     }
 
+    @Post()
+    create(@Request() req, @Body() dto: CreateBookingDto) {
+        return this.bookingService.create(req.user.id, dto)
+    }
+
     // Customer - buat booking
     @Post(':id/payment-proof')
-@UseInterceptors(FileInterceptor('payment_proof', { storage: memoryStorage() }))
-async uploadPaymentProof(
-    @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
-) {
-    const uploaded = await this.cloudinaryService.uploadFile(file, 'payment-proof');
-    const url = (uploaded as any).secure_url;
-    return this.bookingService.updatePaymentProof(+id, url);
-}
+    @UseInterceptors(FileInterceptor('payment_proof', { storage: memoryStorage() }))
+    async uploadPaymentProof(
+        @Param('id') id: string,
+        @UploadedFile() file: Express.Multer.File,
+    ) {
+        const uploaded = await this.cloudinaryService.uploadFile(file, 'payment-proof');
+        const url = (uploaded as any).secure_url;
+        return this.bookingService.updatePaymentProof(+id, url);
+    }
 
     // Customer - cancel booking
     @Put(':id/cancel')
