@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `transaction` ADD COLUMN `paymentProofUrl` VARCHAR(191) NULL;
+ALTER TABLE `Transaction` ADD COLUMN `paymentProofUrl` VARCHAR(191) NULL;
